@@ -1,6 +1,6 @@
 {
     "version": 3,
-    "mappings": "",
+    "mappings": "ACQK,AAAD,qBAAQ,AAAC,CACL,KAAK,CAAE,IAAI,CACd,ADRL,AAAA,IAAI,AAAC,CACD,SAAS,CAAE,KAAK,CAChB,MAAM,CAAE,MAAM,CACjB",
     "sources": [
         "style.scss",
         "../libs/simpleSlider/_simple-slider.scss"
