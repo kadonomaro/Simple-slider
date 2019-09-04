@@ -1,12 +1,23 @@
 .simple-slider {
+    overflow: hidden;
 
     &__wrapper {
 
     }
     &__track {
-
+        
+        &::after {
+            content: '';
+            display: table;
+            clear: both;
+        }
     }
     &__slide {
         float: left;
+    }
+    img {
+        display: block;
+        width: 100%;
+        max-width: 100%;
     }
 }

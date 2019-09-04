@@ -1,5 +1,8 @@
 @import '../libs/simpleSlider/simple-slider';
 
+* {
+    outline: 1px dashed #303030;
+}
 .app {
     max-width: 900px;
     margin: 0 auto;

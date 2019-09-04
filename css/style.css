@@ -1,2 +1,2 @@
-.simple-slider__slide{float:left}.app{max-width:900px;margin:0 auto}
+.simple-slider{overflow:hidden}.simple-slider__track::after{content:'';display:table;clear:both}.simple-slider__slide{float:left}.simple-slider img{display:block;width:100%;max-width:100%}*{outline:1px dashed #303030}.app{max-width:900px;margin:0 auto}
 /*# sourceMappingURL=style.css.map */
