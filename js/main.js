@@ -11,3 +11,4 @@ let slider = new SimpleSlider({
     slideToShow: 3,
 });
 slider.init();
+
