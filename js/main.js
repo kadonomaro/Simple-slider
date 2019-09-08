@@ -11,7 +11,9 @@ let slider = new SimpleSlider({
     transition: 'ease',
     speed: 300,
     slideToShow: 3,
-    slideToScroll: 1
+    slideToScroll: 1,
+    autoPlay: true,
+    autoPlaySpeed: 3000
 });
 slider.init();
 

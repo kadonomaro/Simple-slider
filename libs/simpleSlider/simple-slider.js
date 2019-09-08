@@ -12,6 +12,8 @@ export default class SimpleSlider {
         this.speed = options.speed || 300; //done
         this.slidesCount = this.selector.children.length; //done
         this.slideCounter = 0; //done
+        this.autoPlay = options.autoPlay || false;
+        this.autoPlaySpeed = options.autoPlaySpeed || 3000;
     }
     
     
@@ -42,6 +44,10 @@ export default class SimpleSlider {
 
         if (this.dots) {
             this.dotsInit(sliderTrack);
+        }
+
+        if (this.autoPlay) {
+            this.autoPlaySlides(this.autoPlaySpeed, sliderTrack, this.slidesCount);
         }
         
     }
@@ -86,12 +92,14 @@ export default class SimpleSlider {
             navPrevButton.classList.add(this.navClass.split(' ')[0]);
             navNextButton.classList.add(this.navClass.split(' ')[1]);
         }
+
     }
 
     
     slidePrev(button, track, callback) {
         const that = this;
         button.addEventListener('click', function (evt) {
+            evt.preventDefault();
             if (that.slideCounter > 0) {
                 that.slideCounter--;
                 that.gotoSlide(that.slideCounter, track);
@@ -103,6 +111,7 @@ export default class SimpleSlider {
     slideNext(button, track, callback) {
         const that = this;
         button.addEventListener('click', function (evt) {
+            evt.preventDefault();
             if (that.slideCounter < Math.floor((that.slidesCount - 1) / that.slideToScroll)) {
                 that.slideCounter++;
                 that.gotoSlide(that.slideCounter, track);
@@ -140,6 +149,19 @@ export default class SimpleSlider {
 
         this.selector.appendChild(dotsContainer);
     }
+
+    autoPlaySlides(speed, track, limit) {
+        let index = 1;
+        let interval = setInterval(() => {
+            this.gotoSlide(index, track);
+            index++;
+            this.slideCounter = index;
+            if (index >= limit) {
+                clearInterval(interval);
+            }
+        }, speed);
+    }
+    
 
     gotoSlide(index, track) {
         const that = this;
