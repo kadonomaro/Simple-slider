@@ -4,11 +4,10 @@ export default class SimpleSlider {
         this.selector = options.selector; //done
         this.slideToShow = options.slideToShow || 3; //done
         this.slideToScroll = options.slideToScroll || 1; //done w bugs
-        this.startFrom = options.startFrom || 'first'; // first, center, last
         this.nav = options.nav || false; //done
         this.navClass = options.navClass || ''; //done
-        this.dots = options.dots || false;
-        this.dotsClass = options.dotsClass || '';
+        this.dots = options.dots || false; //done
+        this.dotsClass = options.dotsClass || ''; //done
         this.transition = options.transition || 'linear'; //done
         this.speed = options.speed || 300; //done
         this.slidesCount = this.selector.children.length; //done
@@ -42,7 +41,7 @@ export default class SimpleSlider {
         }
 
         if (this.dots) {
-            this.dotsInit();
+            this.dotsInit(sliderTrack);
         }
         
     }
@@ -96,9 +95,8 @@ export default class SimpleSlider {
         const that = this;
         button.addEventListener('click', function (evt) {
             if (that.slideCounter > 0) {
-                evt.preventDefault();
                 that.slideCounter--;
-                track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter * that.slideToScroll}%)`;
+                track.style.transform = `translateX(-${100 / that.slidesCount * that.slideCounter * that.slideToScroll}%)`;
                 callback();
             }
         });
@@ -108,15 +106,15 @@ export default class SimpleSlider {
         const that = this;
         button.addEventListener('click', function (evt) {
             if (that.slideCounter < Math.floor((that.slidesCount - 1) / that.slideToScroll)) {
-                evt.preventDefault();
                 that.slideCounter++;
-                track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter * that.slideToScroll}%)`;
+                track.style.transform = `translateX(-${100 / that.slidesCount * that.slideCounter * that.slideToScroll}%)`;
                 callback();
             }
         });
     }
 
-    dotsInit() {
+    dotsInit(track) {
+        const that = this;
         const dotsContainer = document.createElement('div');
         dotsContainer.classList.add('simple-slider__dots');
         const dots = document.createElement('ul');
@@ -126,15 +124,29 @@ export default class SimpleSlider {
         for (let i = 0; i < this.slidesCount / this.slideToScroll; i++) {
             const dot = document.createElement('li');
             dot.classList.add('simple-slider__dot', this.dotsClass);
+
             if (i === 0) {
                 dot.classList.add('simple-slider__dot--active');
             }
             dots.appendChild(dot);
-        }
-        this.selector.appendChild(dotsContainer);
 
+            dot.addEventListener('click', function () {
+                that.gotoSlide(i, track);
+                this.parentNode.childNodes.forEach(child => {
+                    child.classList.remove('simple-slider__dot--active');
+                });
+                this.classList.add('simple-slider__dot--active');
+            });
+        }
         
+        this.selector.appendChild(dotsContainer);
     }
+
+    gotoSlide(index, track) {
+        track.style.transform = `translateX(-${100 / this.slidesCount * index}%)`;
+    }
+
+    
 
 
 }
