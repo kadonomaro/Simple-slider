@@ -60,9 +60,7 @@ export default class SimpleSlider {
 
         navContainer.classList.add('simple-slider__nav');
         navPrevButton.classList.add('simple-slider__prev');
-        navPrevButton.textContent = '<';
         navNextButton.classList.add('simple-slider__next');
-        navNextButton.textContent = '>';
         navContainer.appendChild(navPrevButton);
         navContainer.appendChild(navNextButton);
         this.selector.appendChild(navContainer);
@@ -96,7 +94,7 @@ export default class SimpleSlider {
         button.addEventListener('click', function (evt) {
             if (that.slideCounter > 0) {
                 that.slideCounter--;
-                track.style.transform = `translateX(-${100 / that.slidesCount * that.slideCounter * that.slideToScroll}%)`;
+                that.gotoSlide(that.slideCounter, track);
                 callback();
             }
         });
@@ -107,7 +105,7 @@ export default class SimpleSlider {
         button.addEventListener('click', function (evt) {
             if (that.slideCounter < Math.floor((that.slidesCount - 1) / that.slideToScroll)) {
                 that.slideCounter++;
-                track.style.transform = `translateX(-${100 / that.slidesCount * that.slideCounter * that.slideToScroll}%)`;
+                that.gotoSlide(that.slideCounter, track);
                 callback();
             }
         });
@@ -116,8 +114,8 @@ export default class SimpleSlider {
     dotsInit(track) {
         const that = this;
         const dotsContainer = document.createElement('div');
-        dotsContainer.classList.add('simple-slider__dots');
         const dots = document.createElement('ul');
+        dotsContainer.classList.add('simple-slider__dots');
         dots.classList.add('simple-slider__dots-list');
         dotsContainer.appendChild(dots);
         
@@ -132,18 +130,20 @@ export default class SimpleSlider {
 
             dot.addEventListener('click', function () {
                 that.gotoSlide(i, track);
+                that.slideCounter = i;
                 this.parentNode.childNodes.forEach(child => {
                     child.classList.remove('simple-slider__dot--active');
                 });
                 this.classList.add('simple-slider__dot--active');
             });
         }
-        
+
         this.selector.appendChild(dotsContainer);
     }
 
     gotoSlide(index, track) {
-        track.style.transform = `translateX(-${100 / this.slidesCount * index}%)`;
+        const that = this;
+        track.style.transform = `translateX(-${100 / that.slidesCount * index * that.slideToScroll}%)`;
     }
 
     
