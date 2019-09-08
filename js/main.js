@@ -7,10 +7,11 @@ let slider = new SimpleSlider({
     nav: true,
     navClass: 'prev next',
     dots: true,
+    dotsClass: 'dot',
     transition: 'ease',
     speed: 300,
     slideToShow: 3,
-    slideToScroll: 3
+    slideToScroll: 1
 });
 slider.init();
 

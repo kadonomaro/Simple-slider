@@ -57,6 +57,7 @@ export default class SimpleSlider {
         const navContainer = document.createElement('div');
         const navPrevButton = document.createElement('button');
         const navNextButton = document.createElement('button');
+        const that = this;
 
         navContainer.classList.add('simple-slider__nav');
         navPrevButton.classList.add('simple-slider__prev');
@@ -67,8 +68,22 @@ export default class SimpleSlider {
         navContainer.appendChild(navNextButton);
         this.selector.appendChild(navContainer);
 
-        this.slidePrev(navPrevButton, track);
-        this.slideNext(navNextButton, track);
+        this.slidePrev(navPrevButton, track, function () {
+            const dots = document.querySelectorAll('.simple-slider__dot');
+            dots.forEach(dot => {
+                dot.classList.remove('simple-slider__dot--active');
+            });
+            dots[that.slideCounter].classList.add('simple-slider__dot--active');
+
+        });
+
+        this.slideNext(navNextButton, track, function () {
+            const dots = document.querySelectorAll('.simple-slider__dot');
+            dots.forEach(dot => {
+                dot.classList.remove('simple-slider__dot--active');
+            });
+            dots[that.slideCounter].classList.add('simple-slider__dot--active');
+        });
 
         if (this.navClass) {
             navPrevButton.classList.add(this.navClass.split(' ')[0]);
@@ -77,24 +92,26 @@ export default class SimpleSlider {
     }
 
     
-    slidePrev(button, track) {
+    slidePrev(button, track, callback) {
         const that = this;
         button.addEventListener('click', function (evt) {
             if (that.slideCounter > 0) {
                 evt.preventDefault();
                 that.slideCounter--;
                 track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter * that.slideToScroll}%)`;
+                callback();
             }
         });
     }
 
-    slideNext(button, track) {
+    slideNext(button, track, callback) {
         const that = this;
         button.addEventListener('click', function (evt) {
             if (that.slideCounter < Math.floor((that.slidesCount - 1) / that.slideToScroll)) {
                 evt.preventDefault();
                 that.slideCounter++;
                 track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter * that.slideToScroll}%)`;
+                callback();
             }
         });
     }
@@ -104,20 +121,20 @@ export default class SimpleSlider {
         dotsContainer.classList.add('simple-slider__dots');
         const dots = document.createElement('ul');
         dots.classList.add('simple-slider__dots-list');
-
         dotsContainer.appendChild(dots);
         
         for (let i = 0; i < this.slidesCount / this.slideToScroll; i++) {
             const dot = document.createElement('li');
-            dot.classList.add('simple-slider__dot');
+            dot.classList.add('simple-slider__dot', this.dotsClass);
+            if (i === 0) {
+                dot.classList.add('simple-slider__dot--active');
+            }
             dots.appendChild(dot);
         }
-
-        console.log(dotsContainer);
-
         this.selector.appendChild(dotsContainer);
+
         
     }
-}
 
-//Подумать над длиной трека
+
+}
