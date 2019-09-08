@@ -26,11 +26,10 @@ export default class SimpleSlider {
         sliderTrack.style.transition = `transform ${this.speed}ms ${this.transition}`;
 
         [...this.selector.children].forEach(child => {
-            
             sliderTrack.appendChild(child);
             child.style.width = 100 / this.slidesCount + '%';
-            
         });
+
         this.selector.appendChild(sliderWrapper);
         sliderWrapper.appendChild(sliderTrack);
 
@@ -38,9 +37,12 @@ export default class SimpleSlider {
 
         this.setInitialClasses(sliderTrack, 'simple-slider__slide');
 
-        console.log(this.nav);
         if (this.nav) {
-            this.navInit(sliderWrapper, sliderTrack);
+            this.navInit(sliderTrack);
+        }
+
+        if (this.dots) {
+            this.dotsInit();
         }
         
     }
@@ -51,11 +53,11 @@ export default class SimpleSlider {
         });
     }
 
-    navInit(parent, track) {
+    navInit(track) {
         const navContainer = document.createElement('div');
         const navPrevButton = document.createElement('button');
         const navNextButton = document.createElement('button');
-        let slideCounter = 0;
+
         navContainer.classList.add('simple-slider__nav');
         navPrevButton.classList.add('simple-slider__prev');
         navPrevButton.textContent = '<';
@@ -63,7 +65,7 @@ export default class SimpleSlider {
         navNextButton.textContent = '>';
         navContainer.appendChild(navPrevButton);
         navContainer.appendChild(navNextButton);
-        parent.appendChild(navContainer);
+        this.selector.appendChild(navContainer);
 
         this.slidePrev(navPrevButton, track);
         this.slideNext(navNextButton, track);
@@ -81,10 +83,8 @@ export default class SimpleSlider {
             if (that.slideCounter > 0) {
                 evt.preventDefault();
                 that.slideCounter--;
-                // that.slideCounter -= that.slideToScroll;
                 track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter * that.slideToScroll}%)`;
             }
-
         });
     }
 
@@ -94,12 +94,29 @@ export default class SimpleSlider {
             if (that.slideCounter < Math.floor((that.slidesCount - 1) / that.slideToScroll)) {
                 evt.preventDefault();
                 that.slideCounter++;
-                // that.slideCounter += that.slideToScroll;
                 track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter * that.slideToScroll}%)`;
-
             }
-
         });
+    }
+
+    dotsInit() {
+        const dotsContainer = document.createElement('div');
+        dotsContainer.classList.add('simple-slider__dots');
+        const dots = document.createElement('ul');
+        dots.classList.add('simple-slider__dots-list');
+
+        dotsContainer.appendChild(dots);
+        
+        for (let i = 0; i < this.slidesCount / this.slideToScroll; i++) {
+            const dot = document.createElement('li');
+            dot.classList.add('simple-slider__dot');
+            dots.appendChild(dot);
+        }
+
+        console.log(dotsContainer);
+
+        this.selector.appendChild(dotsContainer);
+        
     }
 }
 
