@@ -9,6 +9,9 @@ let slider = new SimpleSlider({
     transition: 'ease',
     speed: 300,
     slideToShow: 3,
+    slideToScroll: 3
 });
 slider.init();
+
+
 

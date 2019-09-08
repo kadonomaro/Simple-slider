@@ -1,18 +1,18 @@
 export default class SimpleSlider {
     
     constructor(options) {
-        this.selector = options.selector;
-        this.slideToShow = options.slideToShow || 3;
-        this.slideToScroll = options.slideToScroll || 1;
+        this.selector = options.selector; //done
+        this.slideToShow = options.slideToShow || 3; //done
+        this.slideToScroll = options.slideToScroll || 1; //done w bugs
         this.startFrom = options.startFrom || 'first'; // first, center, last
-        this.nav = options.nav || true;
-        this.navClass = options.navClass || '';
+        this.nav = options.nav || false; //done
+        this.navClass = options.navClass || ''; //done
         this.dots = options.dots || false;
         this.dotsClass = options.dotsClass || '';
-        this.transition = options.transition || 'linear';
-        this.speed = options.speed || 300;
-        this.slidesCount = this.selector.children.length;
-        this.slideCounter = 0;
+        this.transition = options.transition || 'linear'; //done
+        this.speed = options.speed || 300; //done
+        this.slidesCount = this.selector.children.length; //done
+        this.slideCounter = 0; //done
     }
     
     
@@ -37,7 +37,12 @@ export default class SimpleSlider {
         sliderTrack.style.width = this.slidesCount * 100 / this.slideToShow + '%';
 
         this.setInitialClasses(sliderTrack, 'simple-slider__slide');
-        this.navInit(sliderWrapper, sliderTrack);
+
+        console.log(this.nav);
+        if (this.nav) {
+            this.navInit(sliderWrapper, sliderTrack);
+        }
+        
     }
 
     setInitialClasses(parentSelector, className) {
@@ -69,7 +74,6 @@ export default class SimpleSlider {
         }
     }
 
-    setInitialState() { }
     
     slidePrev(button, track) {
         const that = this;
@@ -77,8 +81,8 @@ export default class SimpleSlider {
             if (that.slideCounter > 0) {
                 evt.preventDefault();
                 that.slideCounter--;
-                track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter}%)`;
-                console.log(that.slideCounter);
+                // that.slideCounter -= that.slideToScroll;
+                track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter * that.slideToScroll}%)`;
             }
 
         });
@@ -87,11 +91,12 @@ export default class SimpleSlider {
     slideNext(button, track) {
         const that = this;
         button.addEventListener('click', function (evt) {
-            if (that.slideCounter < that.slidesCount - 1) {
+            if (that.slideCounter < Math.floor((that.slidesCount - 1) / that.slideToScroll)) {
                 evt.preventDefault();
                 that.slideCounter++;
-                track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter}%)`;
-                console.log(that.slideCounter);
+                // that.slideCounter += that.slideToScroll;
+                track.style.transform = `translateX(-${100 / track.children.length * that.slideCounter * that.slideToScroll}%)`;
+
             }
 
         });
