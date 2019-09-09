@@ -12,10 +12,12 @@ let slider = new SimpleSlider({
     speed: 300,
     slideToShow: 3,
     slideToScroll: 1,
-    autoPlay: true,
-    autoPlaySpeed: 3000
+    autoPlay: false,
+    autoPlaySpeed: 600,
+    padding: 30,
 });
 slider.init();
+
 
 
 

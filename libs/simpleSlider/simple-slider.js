@@ -12,8 +12,10 @@ export default class SimpleSlider {
         this.speed = options.speed || 300; //done
         this.slidesCount = this.selector.children.length; //done
         this.slideCounter = 0; //done
-        this.autoPlay = options.autoPlay || false;
-        this.autoPlaySpeed = options.autoPlaySpeed || 3000;
+        this.autoPlay = options.autoPlay || false; //done
+        this.autoPlaySpeed = options.autoPlaySpeed || 3000; //done
+        this.padding = options.padding + 'px' || 0; //done
+        this.limit = this.slideToShow - this.slideToScroll;
     }
     
     
@@ -26,9 +28,14 @@ export default class SimpleSlider {
         sliderWrapper.classList.add('simple-slider__wrapper');
         sliderTrack.style.transition = `transform ${this.speed}ms ${this.transition}`;
 
-        [...this.selector.children].forEach(child => {
+        [...this.selector.children].forEach((child, index) => {
             sliderTrack.appendChild(child);
+            child.dataset.index = index;
             child.style.width = 100 / this.slidesCount + '%';
+            child.style.maxWidth = 100 / this.slideToShow + '%';
+            if (this.padding) {
+                child.style.padding = `0 ${this.padding}`;
+            }
         });
 
         this.selector.appendChild(sliderWrapper);
@@ -52,17 +59,19 @@ export default class SimpleSlider {
         
     }
 
+
     setInitialClasses(parentSelector, className) {
         [...parentSelector.children].forEach(child => {
             child.classList.add(className);
         });
     }
 
+
     navInit(track) {
+        const that = this;
         const navContainer = document.createElement('div');
         const navPrevButton = document.createElement('button');
         const navNextButton = document.createElement('button');
-        const that = this;
 
         navContainer.classList.add('simple-slider__nav');
         navPrevButton.classList.add('simple-slider__prev');
@@ -108,17 +117,20 @@ export default class SimpleSlider {
         });
     }
 
+
     slideNext(button, track, callback) {
         const that = this;
         button.addEventListener('click', function (evt) {
             evt.preventDefault();
-            if (that.slideCounter < Math.floor((that.slidesCount - 1) / that.slideToScroll)) {
+            // that.cloneSlide(track.children, 0, track);
+            if (that.slideCounter < Math.floor((that.slidesCount - 1) / that.slideToScroll) - that.limit) {
                 that.slideCounter++;
                 that.gotoSlide(that.slideCounter, track);
                 callback();
             }
         });
     }
+
 
     dotsInit(track) {
         const that = this;
@@ -128,7 +140,7 @@ export default class SimpleSlider {
         dots.classList.add('simple-slider__dots-list');
         dotsContainer.appendChild(dots);
         
-        for (let i = 0; i < this.slidesCount / this.slideToScroll; i++) {
+        for (let i = 0; i < this.slidesCount / this.slideToScroll - this.limit; i++) {
             const dot = document.createElement('li');
             dot.classList.add('simple-slider__dot', this.dotsClass);
 
@@ -150,13 +162,14 @@ export default class SimpleSlider {
         this.selector.appendChild(dotsContainer);
     }
 
+
     autoPlaySlides(speed, track, limit) {
         let index = 1;
         let interval = setInterval(() => {
             this.gotoSlide(index, track);
             index++;
             this.slideCounter = index;
-            if (index >= limit) {
+            if (index >= limit - this.limit) {
                 clearInterval(interval);
             }
         }, speed);
@@ -168,7 +181,11 @@ export default class SimpleSlider {
         track.style.transform = `translateX(-${100 / that.slidesCount * index * that.slideToScroll}%)`;
     }
 
+    cloneSlide(slides, startFrom, parent) {
+        const newSlide = slides[startFrom].cloneNode(true);
+        parent.removeChild(slides[startFrom]);
+        parent.appendChild(newSlide);
+    }
+
     
-
-
 }

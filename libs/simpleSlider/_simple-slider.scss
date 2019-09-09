@@ -14,12 +14,14 @@
     }
     &__slide {
         float: left;
+        user-select: none;
+        pointer-events: none;
+        box-sizing: border-box;
     }
     &__nav {
         position: absolute;
         top: 50%;
         width: 100%;
-
     }
     &__prev,
     &__next {
