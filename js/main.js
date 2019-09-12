@@ -17,9 +17,6 @@ let slider = new SimpleSlider({
     padding: 30,
     center: true
 });
+
 slider.init();
-
-
-
-
 

@@ -1,5 +1,5 @@
 export default class SimpleSlider {
-    
+
     constructor(options) {
         this.selector = options.selector; //done
         this.slideToShow = options.slideToShow || 3; //done
@@ -10,14 +10,28 @@ export default class SimpleSlider {
         this.dotsClass = options.dotsClass || ''; //done
         this.transition = options.transition || 'linear'; //done
         this.speed = options.speed || 300; //done
-        this.slidesCount = this.selector.children.length; //done
-        this.slideCounter = 0; //done
         this.autoPlay = options.autoPlay || false; //done
         this.autoPlaySpeed = options.autoPlaySpeed || 3000; //done
         this.padding = options.padding + 'px' || 0; //done
-        this.limit = this.slideToShow - this.slideToScroll; //done
         this.center = options.center || false;
+        
+        this._slidesCount = this.selector.children.length; //done
+        this._currentSlide = 0; //done
+        this._limit = this.slideToShow - this.slideToScroll; //done
     }
+    
+    get slidesCount() {
+        return this._slidesCount;
+    }
+
+    get currentSlide() {
+        return this._currentSlide;
+    }
+
+    get limit() {
+        return this._limit;
+    }
+
     
     
     init() {
@@ -86,7 +100,7 @@ export default class SimpleSlider {
             dots.forEach(dot => {
                 dot.classList.remove('simple-slider__dot--active');
             });
-            dots[this.slideCounter].classList.add('simple-slider__dot--active');
+            dots[this.currentSlide].classList.add('simple-slider__dot--active');
         });
 
         this.slideNext(navNextButton, track,  ()=> {
@@ -94,12 +108,18 @@ export default class SimpleSlider {
             dots.forEach(dot => {
                 dot.classList.remove('simple-slider__dot--active');
             });
-            dots[this.slideCounter].classList.add('simple-slider__dot--active');
+            dots[this.currentSlide].classList.add('simple-slider__dot--active');
         });
 
         if (this.navClass) {
-            navPrevButton.classList.add(this.navClass.split(' ')[0]);
-            navNextButton.classList.add(this.navClass.split(' ')[1]);
+            const navButtonClasses = this.navClass.split(' ');
+            try {
+                navPrevButton.classList.add(navButtonClasses[0]);
+                navNextButton.classList.add(navButtonClasses[1]);
+            } catch (error) {
+                console.error(error);
+                console.error('You must use only one space between class: ', this.navClass);
+            }
         }
 
     }
@@ -108,9 +128,9 @@ export default class SimpleSlider {
     slidePrev(button, track, callback) {
         button.addEventListener('click', (evt)=> {
             evt.preventDefault();
-            if (this.slideCounter > 0) {
-                this.slideCounter--;
-                this.gotoSlide(this.slideCounter, track);
+            if (this._currentSlide > 0) {
+                this._currentSlide--;
+                this.gotoSlide(this.currentSlide, track);
                 callback();
             }
         });
@@ -121,9 +141,9 @@ export default class SimpleSlider {
         button.addEventListener('click', (evt)=> {
             evt.preventDefault();
             // this.cloneSlide(track.children, 0, track);
-            if (this.slideCounter < Math.floor((this.slidesCount - 1) / this.slideToScroll) - this.limit) {
-                this.slideCounter++;
-                this.gotoSlide(this.slideCounter, track);
+            if (this._currentSlide < Math.floor((this._slidesCount - 1) / this.slideToScroll) - this._limit) {
+                this._currentSlide++;
+                this.gotoSlide(this.currentSlide, track);
                 callback();
             }
         });
@@ -137,7 +157,7 @@ export default class SimpleSlider {
         dots.classList.add('simple-slider__dots-list');
         dotsContainer.appendChild(dots);
         
-        for (let i = 0; i < this.slidesCount / this.slideToScroll - this.limit; i++) {
+        for (let i = 0; i < this.slidesCount / this.slideToScroll - this._limit; i++) {
             const dot = document.createElement('li');
             dot.classList.add('simple-slider__dot', this.dotsClass);
 
@@ -148,7 +168,7 @@ export default class SimpleSlider {
 
             dot.addEventListener('click', ()=> {
                 this.gotoSlide(i, track);
-                this.slideCounter = i;
+                this.currentSlide = i;
 
                 dot.parentNode.childNodes.forEach(child => {
                     child.classList.remove('simple-slider__dot--active');
@@ -166,8 +186,8 @@ export default class SimpleSlider {
         let interval = setInterval(() => {
             this.gotoSlide(index, track);
             index++;
-            this.slideCounter = index;
-            if (index >= limit - this.limit) {
+            this.currentSlide = index;
+            if (index >= limit - this._limit) {
                 clearInterval(interval);
             }
         }, speed);
