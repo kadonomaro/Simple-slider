@@ -9,12 +9,13 @@ let slider = new SimpleSlider({
     dots: true,
     dotsClass: 'dot',
     transition: 'ease',
-    speed: 300,
+    speed: 500,
     slideToShow: 3,
     slideToScroll: 1,
     autoPlay: false,
     autoPlaySpeed: 600,
     padding: 30,
+    center: true
 });
 slider.init();
 

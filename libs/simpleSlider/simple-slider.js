@@ -15,7 +15,8 @@ export default class SimpleSlider {
         this.autoPlay = options.autoPlay || false; //done
         this.autoPlaySpeed = options.autoPlaySpeed || 3000; //done
         this.padding = options.padding + 'px' || 0; //done
-        this.limit = this.slideToShow - this.slideToScroll;
+        this.limit = this.slideToShow - this.slideToScroll; //done
+        this.center = options.center || false;
     }
     
     
@@ -56,6 +57,7 @@ export default class SimpleSlider {
         if (this.autoPlay) {
             this.autoPlaySlides(this.autoPlaySpeed, sliderTrack, this.slidesCount);
         }
+
         
     }
 
@@ -68,7 +70,6 @@ export default class SimpleSlider {
 
 
     navInit(track) {
-        const that = this;
         const navContainer = document.createElement('div');
         const navPrevButton = document.createElement('button');
         const navNextButton = document.createElement('button');
@@ -80,21 +81,20 @@ export default class SimpleSlider {
         navContainer.appendChild(navNextButton);
         this.selector.appendChild(navContainer);
 
-        this.slidePrev(navPrevButton, track, function () {
+        this.slidePrev(navPrevButton, track, ()=> {
             const dots = document.querySelectorAll('.simple-slider__dot');
             dots.forEach(dot => {
                 dot.classList.remove('simple-slider__dot--active');
             });
-            dots[that.slideCounter].classList.add('simple-slider__dot--active');
-
+            dots[this.slideCounter].classList.add('simple-slider__dot--active');
         });
 
-        this.slideNext(navNextButton, track, function () {
+        this.slideNext(navNextButton, track,  ()=> {
             const dots = document.querySelectorAll('.simple-slider__dot');
             dots.forEach(dot => {
                 dot.classList.remove('simple-slider__dot--active');
             });
-            dots[that.slideCounter].classList.add('simple-slider__dot--active');
+            dots[this.slideCounter].classList.add('simple-slider__dot--active');
         });
 
         if (this.navClass) {
@@ -106,12 +106,11 @@ export default class SimpleSlider {
 
     
     slidePrev(button, track, callback) {
-        const that = this;
-        button.addEventListener('click', function (evt) {
+        button.addEventListener('click', (evt)=> {
             evt.preventDefault();
-            if (that.slideCounter > 0) {
-                that.slideCounter--;
-                that.gotoSlide(that.slideCounter, track);
+            if (this.slideCounter > 0) {
+                this.slideCounter--;
+                this.gotoSlide(this.slideCounter, track);
                 callback();
             }
         });
@@ -119,13 +118,12 @@ export default class SimpleSlider {
 
 
     slideNext(button, track, callback) {
-        const that = this;
-        button.addEventListener('click', function (evt) {
+        button.addEventListener('click', (evt)=> {
             evt.preventDefault();
-            // that.cloneSlide(track.children, 0, track);
-            if (that.slideCounter < Math.floor((that.slidesCount - 1) / that.slideToScroll) - that.limit) {
-                that.slideCounter++;
-                that.gotoSlide(that.slideCounter, track);
+            // this.cloneSlide(track.children, 0, track);
+            if (this.slideCounter < Math.floor((this.slidesCount - 1) / this.slideToScroll) - this.limit) {
+                this.slideCounter++;
+                this.gotoSlide(this.slideCounter, track);
                 callback();
             }
         });
@@ -133,7 +131,6 @@ export default class SimpleSlider {
 
 
     dotsInit(track) {
-        const that = this;
         const dotsContainer = document.createElement('div');
         const dots = document.createElement('ul');
         dotsContainer.classList.add('simple-slider__dots');
@@ -149,13 +146,14 @@ export default class SimpleSlider {
             }
             dots.appendChild(dot);
 
-            dot.addEventListener('click', function () {
-                that.gotoSlide(i, track);
-                that.slideCounter = i;
-                this.parentNode.childNodes.forEach(child => {
+            dot.addEventListener('click', ()=> {
+                this.gotoSlide(i, track);
+                this.slideCounter = i;
+
+                dot.parentNode.childNodes.forEach(child => {
                     child.classList.remove('simple-slider__dot--active');
                 });
-                this.classList.add('simple-slider__dot--active');
+                dot.classList.add('simple-slider__dot--active');
             });
         }
 
@@ -177,8 +175,7 @@ export default class SimpleSlider {
     
 
     gotoSlide(index, track) {
-        const that = this;
-        track.style.transform = `translateX(-${100 / that.slidesCount * index * that.slideToScroll}%)`;
+        track.style.transform = `translateX(-${100 / this.slidesCount * index * this.slideToScroll}%)`;
     }
 
     cloneSlide(slides, startFrom, parent) {
