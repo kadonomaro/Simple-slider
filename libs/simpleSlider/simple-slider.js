@@ -12,12 +12,13 @@ export default class SimpleSlider {
         this.speed = options.speed || 300; //done
         this.autoPlay = options.autoPlay || false; //done w bugs
         this.autoPlaySpeed = options.autoPlaySpeed || 3000; //done
-        this.padding = options.padding + 'px' || 0; //done
+        this.padding = options.padding || 0; //done
         this.center = options.center || false;
         
         this._slidesCount = this.selector.children.length; //done
         this._currentSlide = 0; //done
         this._limit = this.slideToShow - this.slideToScroll; //done
+        this._slideWidth = 100 / this.slideToShow;
     }
     
     get slidesCount() {
@@ -30,6 +31,10 @@ export default class SimpleSlider {
 
     get limit() {
         return this._limit;
+    }
+
+    get slideWidth() {
+        return this._slideWidth;
     }
 
     
@@ -46,18 +51,15 @@ export default class SimpleSlider {
         [...this.selector.children].forEach((child, index) => {
             sliderTrack.appendChild(child);
             child.dataset.index = index;
-            // child.style.width = 100 / this.slidesCount + '%';
-            child.style.flex = `0 0 ${100 / this.slideToShow}%`
+            child.style.flex = `0 0 ${100 / this.slideToShow}%`;
             child.style.maxWidth = 100 / this.slideToShow + '%';
             if (this.padding) {
-                child.style.padding = `0 ${this.padding}`;
+                child.style.padding = this.padding.split(' ').map(prop => `${prop}px`).join(' ');                
             }
         });
 
         this.selector.appendChild(sliderWrapper);
         sliderWrapper.appendChild(sliderTrack);
-
-        // sliderTrack.style.width = this.slidesCount * 100 / this.slideToShow + '%';
 
         this.setInitialClasses(sliderTrack, 'simple-slider__slide');
 
@@ -141,7 +143,6 @@ export default class SimpleSlider {
     slideNext(button, track, callback) {
         button.addEventListener('click', (evt)=> {
             evt.preventDefault();
-            // this.cloneSlide(track.children, 0, track);
             if (this._currentSlide < Math.floor((this._slidesCount - 1) / this.slideToScroll) - this._limit) {
                 this._currentSlide++;
                 this.gotoSlide(this.currentSlide, track);
@@ -154,8 +155,10 @@ export default class SimpleSlider {
     dotsInit(track) {
         const dotsContainer = document.createElement('div');
         const dots = document.createElement('ul');
+
         dotsContainer.classList.add('simple-slider__dots');
         dots.classList.add('simple-slider__dots-list');
+
         dotsContainer.appendChild(dots);
         
         for (let i = 0; i < this.slidesCount / this.slideToScroll - this._limit; i++) {
@@ -169,7 +172,7 @@ export default class SimpleSlider {
 
             dot.addEventListener('click', ()=> {
                 this.gotoSlide(i, track);
-                this.currentSlide = i;
+                this._currentSlide = i;
 
                 dot.parentNode.childNodes.forEach(child => {
                     child.classList.remove('simple-slider__dot--active');
@@ -197,7 +200,7 @@ export default class SimpleSlider {
     
 
     gotoSlide(index, track) {
-        track.style.transform = `translateX(-${100 / this.slidesCount * index * this.slideToScroll}%)`;
+        track.style.transform = `translateX(-${this._slideWidth * index * this.slideToScroll}%)`;
     }
 
     cloneSlide(slides, startFrom, parent) {

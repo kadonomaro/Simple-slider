@@ -14,9 +14,8 @@ let slider = new SimpleSlider({
     slideToScroll: 1,
     autoPlay: false,
     autoPlaySpeed: 600,
-    padding: 30,
+    padding: '0 10',
     center: true
 });
 
 slider.init();
-
