@@ -40,8 +40,8 @@ export default class SimpleSlider {
     
     
     init() {
-        let sliderTrack = document.createElement('div');
-        let sliderWrapper = document.createElement('div');
+        const sliderTrack = document.createElement('div');
+        const sliderWrapper = document.createElement('div');
 
         this.selector.classList.add('simple-slider');
         sliderTrack.classList.add('simple-slider__track');
@@ -51,8 +51,8 @@ export default class SimpleSlider {
         [...this.selector.children].forEach((child, index) => {
             sliderTrack.appendChild(child);
             child.dataset.index = index;
-            child.style.flex = `0 0 ${100 / this.slideToShow}%`;
-            child.style.maxWidth = 100 / this.slideToShow + '%';
+            child.style.flex = `0 0 ${this._slideWidth}%`;
+            child.style.maxWidth = this._slideWidth + '%';
             if (this.padding) {
                 child.style.padding = this.padding.split(' ').map(prop => `${prop}px`).join(' ');                
             }
@@ -74,7 +74,6 @@ export default class SimpleSlider {
         if (this.autoPlay) {
             this.autoPlaySlides(this.autoPlaySpeed, sliderTrack, this.slidesCount);
         }
-
         
     }
 
