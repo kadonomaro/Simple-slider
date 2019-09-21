@@ -5,15 +5,10 @@
         overflow: hidden;
     }
     &__track {
-        
-        &::after {
-            content: '';
-            display: table;
-            clear: both;
-        }
+        display: flex;
+
     }
     &__slide {
-        float: left;
         user-select: none;
         pointer-events: none;
         box-sizing: border-box;
